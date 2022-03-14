@@ -36,7 +36,7 @@ Allocator allocator_libc(void) {
     .data = NULL,
     .alloc = alloc_libc,
     .free = free_libc,
-    .aligned_alloc = alligned_alloc,
+    .aligned_alloc = aligned_alloc_libc,
     .calloc = calloc_libc,
     .realloc = realloc_libc
   };
