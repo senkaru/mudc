@@ -10,13 +10,13 @@ MUDC_CPP_GUARD_BEGIN
 #include "allocator.h"
 
 
-AllocFn alloc_libc;
-FreeFn free_libc;
-CallocFn calloc_libc;
-ReallocFn realloc_libc;
-AlignedAllocFn aligned_alloc_libc;
+MUDC_DEF AllocFn alloc_libc;
+MUDC_DEF FreeFn free_libc;
+MUDC_DEF CallocFn calloc_libc;
+MUDC_DEF ReallocFn realloc_libc;
+MUDC_DEF AlignedAllocFn aligned_alloc_libc;
 
-Allocator allocator_libc(void);
+MUDC_DEF Allocator allocator_libc(void);
 
 
 
@@ -31,7 +31,7 @@ MUDC_CPP_GUARD_END
 #include <stdlib.h>
 
 
-Allocator allocator_libc(void) {
+MUDC_DEF Allocator allocator_libc(void) {
   return (Allocator) {
     .data = NULL,
     .alloc = alloc_libc,
@@ -42,29 +42,52 @@ Allocator allocator_libc(void) {
   };
 }
 
-void *alloc_libc(Allocator *self, size_t size) {
+MUDC_DEF AllocError alloc_libc(
+    Allocator *restrict self,
+    void **restrict dest,
+    size_t size
+) {
   MUDC_UNUSED(self);
-  return malloc(size);
+  *dest = malloc(size);
+  return *dest ? AllocSuccess : AllocFailure;
 }
 
-void free_libc(Allocator *self, void *ptr) {
+MUDC_DEF void free_libc(Allocator *restrict self, void *restrict ptr) {
   MUDC_UNUSED(self);
   free(ptr);
 }
 
-void *calloc_libc(Allocator *self, size_t num, size_t size) {
+MUDC_DEF AllocError calloc_libc(
+    Allocator *restrict self,
+    void **restrict dest,
+    size_t num,
+    size_t size
+) {
   MUDC_UNUSED(self);
-  return calloc(num, size);
+  *dest = calloc(num, size);
+  return *dest ? AllocSuccess : AllocFailure;
 }
 
-void *realloc_libc(Allocator *self, void *ptr, size_t size) {
+MUDC_DEF AllocError realloc_libc(
+    Allocator *restrict self,
+    void **restrict dest,
+    void *restrict ptr,
+    size_t size
+) {
   MUDC_UNUSED(self);
-  return realloc(ptr, size);
+  *dest = realloc(ptr, size);
+  return *dest ? AllocSuccess : AllocFailure;
 }
 
-void *aligned_alloc_libc(Allocator *self, size_t alignment, size_t size) {
+MUDC_DEF AllocError aligned_alloc_libc(
+    Allocator *restrict self,
+    void **restrict dest,
+    size_t alignment,
+    size_t size
+) {
   MUDC_UNUSED(self);
-  return aligned_alloc(alignment, size);
+  *dest = aligned_alloc(alignment, size);
+  return *dest ? AllocSuccess : AllocFailure;
 }
 
 

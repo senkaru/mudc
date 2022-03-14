@@ -13,13 +13,13 @@ MUDC_CPP_GUARD_BEGIN
 #include "option.h"
 
 
-OPTION_TYPEDEF(OptSize, size_t);
-OPTION_TYPEDEF(OptPtrDiff, ptrdiff_t);
-OPTION_TYPEDEF(OptMaxAlign, max_align_t);
-OPTION_TYPEDEF(OptWChar, wchar_t);
+OPT_TYPEDEF(OptSize, size_t);
+OPT_TYPEDEF(OptPtrDiff, ptrdiff_t);
+OPT_TYPEDEF(OptMaxAlign, max_align_t);
+OPT_TYPEDEF(OptWChar, wchar_t);
 
 #ifdef __STDC_WANT_LIB_EXT1__
-OPTION_TYPEDEF(OptRSize, rsize_t);
+OPT_TYPEDEF(OptRSize, rsize_t);
 #endif
 
 

@@ -13,24 +13,50 @@ MUDC_CPP_GUARD_BEGIN
 #include "option.h"
 
 
+typedef enum AllocError {
+  AllocSuccess = 0,
+  AllocFailure = 1
+} AllocError;
+OPT_TYPEDEF(OptAllocError, AllocError);
+OPT_TYPEDEF(OptAllocErrorPtr, AllocError *);
+
 typedef struct Allocator Allocator;
 
-typedef void *(AllocFn)(Allocator *self, size_t size);
-typedef void (FreeFn)(Allocator *self, void *ptr);
-typedef void *(AlignedAllocFn)(Allocator *self, size_t alignment, size_t size);
-typedef void *(CallocFn)(Allocator *self, size_t num, size_t size);
-typedef void *(ReallocFn)(Allocator *self, void *ptr, size_t size);
+typedef AllocError AllocFn(
+    Allocator *restrict self,
+    void **restrict dest,
+    size_t size
+);
+typedef void FreeFn(Allocator *restrict self, void *restrict ptr);
+typedef AllocError AlignedAllocFn(
+    Allocator *restrict self,
+    void **restrict dest,
+    size_t alignment,
+    size_t size
+);
+typedef AllocError CallocFn(
+    Allocator *restrict self,
+    void **restrict dest,
+    size_t num,
+    size_t size
+);
+typedef AllocError ReallocFn(
+    Allocator *restrict self,
+    void **restrict dest,
+    void *restrict ptr,
+    size_t size
+);
 
 struct Allocator {
   void *data;
-  AllocFn *alloc;
-  FreeFn *free;
-  AlignedAllocFn *aligned_alloc;
-  CallocFn *calloc;
-  ReallocFn *realloc;
+  AllocFn *const alloc;
+  FreeFn *const free;
+  AlignedAllocFn *const aligned_alloc;
+  CallocFn *const calloc;
+  ReallocFn *const realloc;
 };
-OPTION_TYPEDEF(OptAllocator, Allocator);
-OPTION_TYPEDEF(OptAllocatorPtr, Allocator *);
+OPT_TYPEDEF(OptAllocator, Allocator);
+OPT_TYPEDEF(OptAllocatorPtr, Allocator *);
 
 
 MUDC_CPP_GUARD_END

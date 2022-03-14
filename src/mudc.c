@@ -5,3 +5,4 @@
 #include "mudc/allocator.h"
 #define MUDC_ALLOCATOR_LIBC_IMPLEMENTATION
 #include "mudc/allocator_libc.h"
+#include "mudc/string.h"
