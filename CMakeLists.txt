@@ -18,15 +18,17 @@ set (PROJECT_NAME "mudc")
 set (CMAKE_C_STANDARD 11)
 set (CMAKE_C_STANDARD_REQUIRED ON)
 
-include (cmake/CompileOptions.cmake)
+include (cmake/CCompileOptions.cmake)
 
 add_library (${PROJECT_NAME} INTERFACE)
+CCompileOptions(${PROJECT_NAME} INTERFACE ON)
 target_include_directories (${PROJECT_NAME}
   INTERFACE
     "./include"
 )
 
 add_library (${PROJECT_NAME}_STATIC STATIC "src/mudc.c")
+CCompileOptions(${PROJECT_NAME}_STATIC PRIVATE ON)
 target_include_directories (${PROJECT_NAME}_STATIC
   PUBLIC
     "./include"
