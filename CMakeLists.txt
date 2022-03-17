@@ -27,15 +27,13 @@ target_include_directories (${PROJECT_NAME}
     "./include"
 )
 
-add_library (${PROJECT_NAME}_STATIC STATIC "src/mudc.c")
-CCompileOptions(${PROJECT_NAME}_STATIC PRIVATE ON)
-target_include_directories (${PROJECT_NAME}_STATIC
+set (PROJECT_NAME_STATIC "${PROJECT_NAME}_static")
+add_library (${PROJECT_NAME_STATIC} STATIC "src/mudc.c")
+CCompileOptions(${PROJECT_NAME_STATIC} PRIVATE ON)
+target_include_directories (${PROJECT_NAME_STATIC}
   PUBLIC
     "./include"
 )
-
-# add_executable (${PROJECT_NAME}_TEST "./src/mudc.c")
-# target_link_libraries (${PROJECT_NAME}_TEST PRIVATE ${PROJECT_NAME})
 
 install (TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Targets
   LIBRARY DESTINATION lib
@@ -43,7 +41,7 @@ install (TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Targets
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
-install (TARGETS ${PROJECT_NAME}_STATIC EXPORT ${PROJECT_NAME}_STATICTargets
+install (TARGETS ${PROJECT_NAME_STATIC} EXPORT ${PROJECT_NAME_STATIC}Targets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
