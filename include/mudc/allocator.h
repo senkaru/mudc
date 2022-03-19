@@ -49,11 +49,11 @@ typedef AllocError ReallocFn(
 
 struct Allocator {
   void *data;
-  AllocFn *const alloc;
-  FreeFn *const free;
-  AlignedAllocFn *const aligned_alloc;
-  CallocFn *const calloc;
-  ReallocFn *const realloc;
+  AllocFn *alloc;
+  FreeFn *free;
+  AlignedAllocFn *aligned_alloc;
+  CallocFn *calloc;
+  ReallocFn *realloc;
 };
 OPT_TYPEDEF(OptAllocator, Allocator);
 OPT_TYPEDEF(OptAllocatorPtr, Allocator *);
