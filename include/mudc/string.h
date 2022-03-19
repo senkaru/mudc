@@ -66,14 +66,7 @@ MUDC_DEF int strbuf_expand(StrBuf *strbuf, size_t s);
  * (or by using realloc if available) */
 MUDC_DEF int strbuf_trim(StrBuf *strbuf);
 
-#define strbuf_append(strbuf, strlike) _Generic(strlike, \
-    char: strbuf_append_char(strbuf, strlike), \
-    char const *: strbuf_append_cstr(strbuf, strlike), \
-    StrBuf: strbuf_append_str(strbuf, str_new(strlike)), \
-    Str: strbuf_append_str(strbuf, strlike)
-MUDC_DEF void strbuf_append_char (StrBuf *strbuf, char c);
-MUDC_DEF void strbuf_append_cstr(StrBuf *strbuf, char const *cstr);
-MUDC_DEF void strbuf_append_str(StrBuf *strbuf, Str s);
+MUDC_DEF void strbuf_append(StrBuf *strbuf, Str s);
 
 /* Str functions */
 
@@ -203,21 +196,7 @@ MUDC_DEF int strbuf_trim(StrBuf *strbuf) {
   return 0;
 }
 
-MUDC_DEF void strbuf_append_char(StrBuf *strbuf, char c) {
-  if (!strbuf || !c) return;
-  if (strbuf->length == strbuf->capacity) {
-    // TODO: Decide if expansion should be by different default amount
-    if (strbuf_expand(strbuf, 1)) return;
-    strbuf->capacity++;
-  }
-  strbuf->data[strbuf->length++] = c;
-}
-
-MUDC_DEF void strbuf_append_cstr(StrBuf *strbuf, char const *cstr) {
-  strbuf_append_str(strbuf, str_new(cstr));
-}
-
-MUDC_DEF void strbuf_append_str(StrBuf *strbuf, StrBuf s) {
+MUDC_DEF void strbuf_append(StrBuf *strbuf, StrBuf s) {
   if (!strbuf || !s.length) return;
   if (strbuf->length + s.length > strbuf->capacity) {
     // TODO: Decide if expansion should be by different default amount
