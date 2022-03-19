@@ -43,8 +43,8 @@ MUDC_DEF Allocator allocator_libc(void) {
 }
 
 MUDC_DEF AllocError alloc_libc(
-    Allocator *restrict self,
-    void **restrict dest,
+    Allocator self,
+    void **dest,
     size_t size
 ) {
   MUDC_UNUSED(self);
@@ -52,14 +52,14 @@ MUDC_DEF AllocError alloc_libc(
   return *dest ? AllocSuccess : AllocFailure;
 }
 
-MUDC_DEF void free_libc(Allocator *restrict self, void *restrict ptr) {
+MUDC_DEF void free_libc(Allocator self, void *ptr) {
   MUDC_UNUSED(self);
   free(ptr);
 }
 
 MUDC_DEF AllocError calloc_libc(
-    Allocator *restrict self,
-    void **restrict dest,
+    Allocator self,
+    void **dest,
     size_t num,
     size_t size
 ) {
@@ -69,7 +69,7 @@ MUDC_DEF AllocError calloc_libc(
 }
 
 MUDC_DEF AllocError realloc_libc(
-    Allocator *restrict self,
+    Allocator self,
     void **restrict dest,
     void *restrict ptr,
     size_t size
@@ -80,8 +80,8 @@ MUDC_DEF AllocError realloc_libc(
 }
 
 MUDC_DEF AllocError aligned_alloc_libc(
-    Allocator *restrict self,
-    void **restrict dest,
+    Allocator self,
+    void **dest,
     size_t alignment,
     size_t size
 ) {

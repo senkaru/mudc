@@ -102,7 +102,7 @@ MUDC_DEF OptStrBuf strbuf_alloc(Allocator a, size_t const capacity) {
   if (!a.alloc || !a.free) return NONE;
 
   StrBuf result = { .capacity = capacity, .allocator = a };
-  if (result.a.alloc(&result.a, &result.data, capacity)) return NONE;
+  if (result.a.alloc(result.a, &result.data, capacity)) return NONE;
 
   return SOME(result);
 }
@@ -117,7 +117,7 @@ MUDC_DEF OptStrBuf strbuf_new_cstr(
   if (capacity < cstr_len) return NONE;
 
   StrBuf result = { .length = cstr_len, .capacity = capacity, .allocator = a };
-  if (result.a.alloc(&result.a, &result.data, capacity)) return NONE;
+  if (result.a.alloc(result.a, &result.data, capacity)) return NONE;
   memcpy(&result.data, cstr, cstr_len);
 
   return SOME(result);
@@ -134,7 +134,7 @@ MUDC_DEF OptStrBuf strbuf_new_strbuf(
     .capacity = capacity,
     .allocator = a
   };
-  if (result.a.alloc(&result.a, &result.data, capacity)) return NONE;
+  if (result.a.alloc(result.a, &result.data, capacity)) return NONE;
   memcpy(&result.data, &strbuf.data, &strbuf.length);
 
   return SOME(result);
@@ -151,7 +151,7 @@ MUDC_DEF OptStrBuf strbuf_new_str(
     .capacity = capacity,
     .allocator = a
   };
-  if (result.a.alloc(&result.a, &result.data, capacity)) return NONE;
+  if (result.a.alloc(result.a, &result.data, capacity)) return NONE;
   memcpy(&result.data, &str.data, &str.length);
 
   return SOME(result);
