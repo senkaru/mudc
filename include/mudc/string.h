@@ -56,6 +56,25 @@ MUDC_DEF OptStrBuf strbuf_new_str(
 
 MUDC_DEF void strbuf_free(StrBuf *strbuf);
 
+/* Non-destructively expand the capacity by allocating new
+ * capacity first, copying, then freeing old unused (or by
+ * using realloc if available) */
+MUDC_DEF int strbuf_expand(StrBuf *strbuf, size_t s);
+
+/* Non-destructively trim the unused capacity by allocating
+ * appropriate size first, copying, then freeing old unused
+ * (or by using realloc if available) */
+MUDC_DEF int strbuf_trim(StrBuf *strbuf);
+
+#define strbuf_append(strbuf, strlike) _Generic(strlike, \
+    char: strbuf_append_char(strbuf, strlike), \
+    char const *: strbuf_append_cstr(strbuf, strlike), \
+    StrBuf: strbuf_append_str(strbuf, str_new(strlike)), \
+    Str: strbuf_append_str(strbuf, strlike)
+MUDC_DEF void strbuf_append_char (StrBuf *strbuf, char c);
+MUDC_DEF void strbuf_append_cstr(StrBuf *strbuf, char const *cstr);
+MUDC_DEF void strbuf_append_str(StrBuf *strbuf, Str s);
+
 /* Str functions */
 
 #define str_new(strlike) _Generic(strlike, \
@@ -143,6 +162,70 @@ MUDC_DEF void strbuf_free(StrBuf *strbuf) {
   strbuf->data = NULL;
   strbuf->length = 0;
   strbuf->capacity = 0;
+}
+
+MUDC_DEF int strbuf_expand(StrBuf *strbuf, size_t s) {
+  if (!strbuf) return 1;
+  Allocator a = strbuf->allocator;
+
+  char *new_data;
+  if (a.realloc && strbuf->capacity > 0) {
+    if (a.realloc(a, &new_data, strbuf->data, strbuf->length + s)) return 1;
+    memcpy(a->data, new_data, strbuf->length);
+  }
+  else {
+    if (a.malloc(a, &new_data, strbuf->length + s)) return 1;
+    memcpy(new_data, a->data, strbuf->length);
+    a.free(a, strbuf->data);
+    strbuf->data = new_data;
+  }
+  strbuf->capacity += s;
+
+  return 0;
+}
+
+MUDC_DEF int strbuf_trim(StrBuf *strbuf) {
+  if (!strbuf || strbuf->length == strbuf->capacity) return 1;
+  Allocator a = strbuf->allocator;
+
+  char *new_data;
+  if (a.realloc) {
+    if (a.realloc(a, &new_data, strbuf->data, strbuf->length)) return 1;
+  }
+  else {
+    if (a.malloc(a, &new_data, strbuf->length)) return 1;
+    memcpy(new_data, strbuf->data, strbuf->length);
+    a.free(a, strbuf->data);
+    strbuf->data = new_data;
+  }
+  strbuf->capacity = strbuf->length;
+
+  return 0;
+}
+
+MUDC_DEF void strbuf_append_char(StrBuf *strbuf, char c) {
+  if (!strbuf || !c) return;
+  if (strbuf->length == strbuf->capacity) {
+    // TODO: Decide if expansion should be by different default amount
+    if (strbuf_expand(strbuf, 1)) return;
+    strbuf->capacity++;
+  }
+  strbuf->data[strbuf->length++] = c;
+}
+
+MUDC_DEF void strbuf_append_cstr(StrBuf *strbuf, char const *cstr) {
+  strbuf_append_str(strbuf, str_new(cstr));
+}
+
+MUDC_DEF void strbuf_append_str(StrBuf *strbuf, StrBuf s) {
+  if (!strbuf || !s.length) return;
+  if (strbuf->length + s.length > strbuf->capacity) {
+    // TODO: Decide if expansion should be by different default amount
+    if (strbuf_expand(strbuf, s.length)) return;
+    strbuf->capacity++;
+  }
+  memcpy(strbuf->data + strbuf->length, s.data, s.length);
+  strbuf->length += s.length;
 }
 
 /* Str functions */
