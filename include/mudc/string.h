@@ -34,10 +34,10 @@ OPT_TYPEDEF(OptStrPtr, Str *);
 
 MUDC_DEF OptStrBuf strbuf_alloc(Allocator a, size_t const capacity);
 
-#define strbuf_new(a, capacity, strlike) _Generic(strlike, \
+#define strbuf_new(a, capacity, strlike) _Generic((strlike), \
     char *: strbuf_new_cstr(a, capacity, strlike), \
-    StrBuf: strbuf_new_strbuf(a, capacity, strlike), \
-    Str: strbuf_new_str(a, capacity, strlike)
+    struct StrBuf: strbuf_new_strbuf(a, capacity, strlike), \
+    struct Str: strbuf_new_str(a, capacity, strlike)
 MUDC_DEF OptStrBuf strbuf_new_cstr(
     Allocator a,
     size_t const capacity,
@@ -70,10 +70,10 @@ MUDC_DEF void strbuf_append(StrBuf *strbuf, Str s);
 
 /* Str functions */
 
-#define str_new(strlike) _Generic(strlike, \
+#define str_new(strlike) _Generic((strlike), \
     char *: str_new_cstr(strlike), \
-    StrBuf: str_new_strbuf(strlike), \
-    Str: str_new_str(strlike)
+    struct StrBuf: str_new_strbuf(strlike), \
+    struct Str: str_new_str(strlike)
 MUDC_DEF Str str_new_cstr(char const *const cstr);
 MUDC_DEF Str str_new_strbuf(StrBuf const strbuf);
 MUDC_DEF Str str_new_str(Str const str);
